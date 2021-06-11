@@ -17,6 +17,7 @@ with open(f'{script}\\config.json', "r") as f:
         user = config.get("user_key")
         api = config.get("api_key")
         discord_hook = config.get("discord_webhook")
+        choose = config.get("push_or_dis")
         f.close()
 
 client = Client(user, api_token=api)
@@ -29,6 +30,7 @@ class Activity:
         self.api = api
         self.client = client
         self.discord_hook = discord_hook
+        self.choose = choose
 
     def get_name(self):
         self.name = input("What is your name?\n> ")
@@ -40,14 +42,19 @@ class Activity:
         while True:
             its_time = datetime.now().strftime("%H:%M")
             if its_time in self.acts:
-                self.client.send_message(self.acts[its_time], title=self.acts[its_time])
-                data = {
-                    "content" : self.acts[its_time],
-                    "username": "acts-tracker"
-                }
+                if choose == "push":
+                    self.client.send_message(self.acts[its_time], title=self.acts[its_time])
+                    time.sleep(60)
+                elif choose == "dis":
+                    data = {
+                        "content" : self.acts[its_time],
+                        "username": "acts-tracker"
+                    }
 
-                result = requests.post(self.discord_hook, json=data)
-                time.sleep(60)
+                    result = requests.post(self.discord_hook, json=data)
+                    time.sleep(60)
+                else:
+                    print("Trouble in the conf file")
             else:
                 time.sleep(60)
 
