@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 import time
 from pushover import init, Client
+import requests
 
 #get file path
 script = dirname(abspath(__file__))
@@ -15,6 +16,7 @@ with open(f'{script}\\config.json', "r") as f:
         config = json.load(f)
         user = config.get("user_key")
         api = config.get("api_key")
+        discord_hook = config.get("discord_webhook")
         f.close()
 
 client = Client(user, api_token=api)
@@ -26,6 +28,7 @@ class Activity:
         self.user = user
         self.api = api
         self.client = client
+        self.discord_hook = discord_hook
 
     def get_name(self):
         self.name = input("What is your name?\n> ")
@@ -38,7 +41,15 @@ class Activity:
             its_time = datetime.now().strftime("%H:%M")
             if its_time in self.acts:
                 self.client.send_message(self.acts[its_time], title=self.acts[its_time])
-            time.sleep(60)
+                data = {
+                    "content" : self.acts[its_time],
+                    "username": "acts-tracker"
+                }
+
+                result = requests.post(self.discord_hook, json=data)
+                time.sleep(60)
+            else:
+                time.sleep(60)
 
     def look_at_json(self):
         with open(f'{script}\\activities.json', "r") as f:
