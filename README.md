@@ -1,5 +1,5 @@
 # act-track
-act-track is a simple activity tracker that will notify you via Pushover (and soon to be discord) whenever you would like!
+act-track is a simple activity tracker that will notify you via Pushover or Discord whenever you would like!
 
 # Installation
 Use `git` to clone this repo.
