@@ -1,4 +1,6 @@
 {
   "user_key": "Pushover key here",
   "api_key": "Pushover api key here",
+  "discord_webhook": "webhook url here",
+  "push_or_dis": "push or dis"
 }
