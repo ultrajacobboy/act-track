@@ -2,18 +2,30 @@ from os.path import abspath, dirname
 import json
 from datetime import datetime
 import time
+from pushover import init, Client
 
 #get file path
 script = dirname(abspath(__file__))
 
 with open(f'{script}\\activities.json', "r") as f:
         acts = json.load(f)
-        f.close
+        f.close()
+
+with open(f'{script}\\config.json', "r") as f:
+        config = json.load(f)
+        user = config.get("user_key")
+        api = config.get("api_key")
+        f.close()
+
+client = Client(user, api_token=api)
 
 #activity class
 class Activity:
     def __init__(self):
         self.acts = acts
+        self.user = user
+        self.api = api
+        self.client = client
 
     def get_name(self):
         self.name = input("What is your name?\n> ")
@@ -24,11 +36,15 @@ class Activity:
     def check_for_act(self):
         while True:
             its_time = datetime.now().strftime("%H:%M")
-            #its_time = "01:01"
             if its_time in self.acts:
-                #pass
-                print(self.acts[its_time])
+                self.client.send_message(self.acts[its_time], title=self.acts[its_time])
             time.sleep(60)
+
+    def look_at_json(self):
+        with open(f'{script}\\activities.json', "r") as f:
+            data = json.load(f)
+            f.close()
+        self.acts = data
 
     def add_activity(self):
         new_act = input("Please enter the name of the new activity: ")
@@ -44,16 +60,17 @@ class Activity:
                 with open(f'{script}\\activities.json', "r") as f:
                     data = json.load(f)
                     data.update(act_dict)
-                    f.close
+                    f.close()
                 with open(f'{script}\\activities.json', "w", encoding="utf-8") as asdf:
                     json.dump(data, asdf)
-                    self.acts = data
+                    f.close()
                 print(f"OK {new_act} at {new_time}.")
             else:
                 print("Invalid. Either hours or minutes is a wack number.")
         except ValueError as e:
             print(e)
             print("Invalid format. It should be hour:minute")
+        self.look_at_json()
 
     def delete_all(self):
         confirm = input("ARE YOU SURE YOU WANT TO DELETE ALL ACTIVITES? Y/N: ")
@@ -61,12 +78,13 @@ class Activity:
             with open(f'{script}\\activities.json', "w", encoding="utf-8") as f:
                 blank = {}
                 json.dump(blank, f, ensure_ascii=False, indent=4)
-                self.acts = blank
                 print("All activities erased.")
+                f.close()
         elif confirm.lower() == "n":
             print("Ok. Nothing has been erased.")
         else:
             print("idk what ur trying to do here so im not erasing anything.")
+        self.look_at_json()
 
     def list_all(self):
         with open(f'{script}\\activities.json') as f:
@@ -74,11 +92,12 @@ class Activity:
             listed = str(lists)
             list_strip = listed.strip("\{\}")
             print(list_strip)
+            f.close()
 
     def delete_one(self):
         with open(f'{script}\\activities.json', "r") as f:
             acts = json.load(f)
-            f.close
+            f.close()
         listed = str(acts)
         list_strip = listed.strip("\{\}")
         print(list_strip)
@@ -87,18 +106,24 @@ class Activity:
             del acts[which]
             with open(f'{script}\\activities.json', "w", encoding="utf-8") as f:
                 json.dump(acts, f)
-                self.acts = acts
+                f.close()
             print(f"{which} has been deleted.")
         else:
             print("Not found")
+        self.look_at_json()
+
+    def get_time(self):
+        date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        print(f"It is currently {date_time}")
 
     def greeting(self):
         with open(f'{script}\\name.json') as f:
             names = json.load(f)
+            f.close()
         name = names.get("name")
         date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         print(f"Hello, {name}, it is currently {date_time}.")
 
     def help(self):
         print("""Welcome to the activity tracker!\nCommands:\nchange_name: changes your name
-add_activity: adds an activity.\ndelete_all: deletes ALL activities\nlist_all: lists all current activities\ndelete_one: Delete one specified activity """)
+add_activity: adds an activity.\ndelete_all: deletes ALL activities\nlist_all: lists all current activities\ndelete_one: Delete one specified activity\ntime: tells the time """)
