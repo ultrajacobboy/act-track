@@ -8,7 +8,7 @@ Use `git` to clone this repo.
 git clone https://github.com/ultrajacobboy/act-track
 ```
 
-#Usage
+# Usage
 Run main.py
 
 It will look something like this:
