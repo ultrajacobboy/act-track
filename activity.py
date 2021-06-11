@@ -63,7 +63,7 @@ class Activity:
                     f.close()
                 with open(f'{script}\\activities.json', "w", encoding="utf-8") as asdf:
                     json.dump(data, asdf)
-                    f.close()
+                    asdf.close()
                 print(f"OK {new_act} at {new_time}.")
             else:
                 print("Invalid. Either hours or minutes is a wack number.")
