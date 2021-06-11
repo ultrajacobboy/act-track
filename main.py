@@ -1,10 +1,10 @@
-from pushover import init, Client
 from os.path import abspath, dirname
 import json
 import time
 import threading
 import multiprocessing
 import sys
+from pushover import init, Client
 
 #My modules
 from activity import Activity
@@ -50,7 +50,7 @@ else:
     while True:
         checking = threading.Thread(target=activity.check_for_act)
         checking.start()
-        user_input = input("> ")
+        user_input = input(">")
         if user_input == "help" or user_input == "h" or user_input == "man" or user_input == "?":
             activity.help()
         elif user_input == "change_name":
@@ -63,9 +63,13 @@ else:
             activity.list_all()
         elif user_input == "delete_one":
             activity.delete_one()
+        elif user_input == "time" or user_input == "get_time":
+            activity.get_time()
 
         elif user_input == "exit" or user_input == "quit":
             print("Exiting. Please be aware that activities will not be notified while this is not running.")
-            break
+            print("idk how to stop threads")
+            sys.exit()
         else:
             print("Unknown command. Do help to learn more.")
+
