@@ -9,6 +9,8 @@ git clone https://github.com/ultrajacobboy/act-track
 ```
 
 # Usage
+Edit config file with Pushover or Discord webhook details.
+
 Run main.py
 
 It will look something like this:
