@@ -5,6 +5,7 @@ import threading
 import multiprocessing
 import sys
 from pushover import init, Client
+import platform
 
 #My modules
 from activity import Activity
@@ -15,13 +16,18 @@ if cpu_count < 2:
     print("Sorry. This cannot run with less than 2 cores.")
     sys.exit()
 else:
+    user_os = platform.system()
+    if user_os == "Windows":
+        path = "\\"
+    else:
+        path = "/"
     #Open the config json file
     script = dirname(abspath(__file__))
-    with open(f'{script}\\config.json') as f:
+    with open(f'{script}{path}config.json') as f:
         config = json.load(f)
 
     #This stores name and stuff
-    with open(f'{script}\\name.json') as f:
+    with open(f'{script}{path}name.json') as f:
         settings = json.load(f)
 
     #get config stuffs for pushover
@@ -46,10 +52,11 @@ else:
 
     activity.greeting()
 
+    checking = threading.Thread(target=activity.check_for_act)
+    checking.start()
+
     #As a wise man once said; LETS GO!
     while True:
-        checking = threading.Thread(target=activity.check_for_act)
-        checking.start()
         user_input = input(">")
         if user_input == "help" or user_input == "h" or user_input == "man" or user_input == "?":
             activity.help()
@@ -65,6 +72,8 @@ else:
             activity.delete_one()
         elif user_input == "time" or user_input == "get_time":
             activity.get_time()
+        elif user_input == "set_color":
+            activity.set_color()
 
         elif user_input == "exit" or user_input == "quit":
             print("Exiting. Please be aware that activities will not be notified while this is not running.")
@@ -72,4 +81,5 @@ else:
             sys.exit()
         else:
             print("Unknown command. Do help to learn more.")
+
 
