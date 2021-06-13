@@ -1,11 +1,15 @@
-from os.path import abspath, dirname
-import json
-import time
-import threading
-import multiprocessing
-import sys
-from pushover import init, Client
-import platform
+try:
+    from os.path import abspath, dirname
+    import json
+    import time
+    import threading
+    import multiprocessing
+    import sys
+    from pushover import init, Client
+    import platform
+except:
+    print("Please type this: pip3 install python-pushover, colorama")
+    sys.exit()
 
 #My modules
 from activity import Activity
@@ -43,13 +47,6 @@ else:
     if settings["name"] is None:
         activity.get_name()
 
-    #get current acts
-    with open(f'{script}\\activities.json') as f:
-        acts = json.load(f)
-
-    #sleep so the computer can write to file
-    time.sleep(.1)
-
     activity.greeting()
 
     checking = threading.Thread(target=activity.check_for_act)
@@ -74,6 +71,12 @@ else:
             activity.get_time()
         elif user_input == "set_color":
             activity.set_color()
+        elif user_input == "clear_on_start":
+            activity.clear_on_start()
+        elif user_input == "set_back":
+            activity.set_back()
+        elif user_input == "set_style":
+            activity.set_style()
 
         elif user_input == "exit" or user_input == "quit":
             print("Exiting. Please be aware that activities will not be notified while this is not running.")
